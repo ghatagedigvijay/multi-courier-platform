@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "Multi-Courier Integration API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "orderId", "value": "OMS-10001" },
+    { "key": "batchId", "value": "replace-with-batch-id" },
+    { "key": "apiKey", "value": "" }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "x-api-key", "type": "string" },
+      { "key": "value", "value": "{{apiKey}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{baseUrl}}/health" } },
+    { "name": "Supported couriers", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/couriers" } },
+    {
+      "name": "Create order",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"order_id\": \"{{orderId}}\",\n  \"courier_partner\": \"mock\",\n  \"shipment\": {\n    \"pickup\": { \"name\": \"Warehouse\", \"phone\": \"9876543210\", \"address_line1\": \"1 Warehouse Road\", \"city\": \"Gurugram\", \"state\": \"Haryana\", \"postal_code\": \"122001\", \"country\": \"IN\" },\n    \"delivery\": { \"name\": \"Customer\", \"phone\": \"9876543211\", \"address_line1\": \"2 Market Road\", \"city\": \"Delhi\", \"state\": \"Delhi\", \"postal_code\": \"110001\", \"country\": \"IN\" },\n    \"package\": { \"weight_kg\": 1.2, \"length_cm\": 20, \"width_cm\": 15, \"height_cm\": 10, \"declared_value\": 1250 },\n    \"payment_mode\": \"PREPAID\", \"currency\": \"INR\",\n    \"items\": [{ \"name\": \"Sample item\", \"quantity\": 1, \"unit_price\": 1250 }]\n  }\n}"
+        },
+        "url": "{{baseUrl}}/api/v1/orders"
+      }
+    },
+    { "name": "Get order", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/orders/{{orderId}}" } },
+    { "name": "Track order", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/orders/{{orderId}}/tracking?courier_partner=mock" } },
+    {
+      "name": "Cancel order",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": { "mode": "raw", "raw": "{\"courier_partner\":\"mock\"}" },
+        "url": "{{baseUrl}}/api/v1/orders/{{orderId}}/cancel"
+      }
+    },
+    {
+      "name": "Create bulk batch",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"orders\":[{\"order_id\":\"OMS-10002\",\"courier_partner\":\"mock\",\"shipment\":{\"pickup\":{\"name\":\"Warehouse\",\"phone\":\"9876543210\",\"address_line1\":\"1 Warehouse Road\",\"city\":\"Gurugram\",\"state\":\"Haryana\",\"postal_code\":\"122001\",\"country\":\"IN\"},\"delivery\":{\"name\":\"Customer\",\"phone\":\"9876543211\",\"address_line1\":\"2 Market Road\",\"city\":\"Delhi\",\"state\":\"Delhi\",\"postal_code\":\"110001\",\"country\":\"IN\"},\"package\":{\"weight_kg\":1.2,\"length_cm\":20,\"width_cm\":15,\"height_cm\":10,\"declared_value\":1250},\"payment_mode\":\"PREPAID\",\"currency\":\"INR\",\"items\":[{\"name\":\"Sample item\",\"quantity\":1,\"unit_price\":1250}]}}]}"
+        },
+        "url": "{{baseUrl}}/api/v1/orders/bulk"
+      }
+    },
+    { "name": "Get batch", "request": { "method": "GET", "url": "{{baseUrl}}/api/v1/batches/{{batchId}}" } }
+  ]
+}
