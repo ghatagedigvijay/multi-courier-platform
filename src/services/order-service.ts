@@ -287,7 +287,7 @@ export class OrderService {
     } catch (error) {
       if (!(error instanceof CourierError)) {
         this.logFailure(row, row.request_id, error, 'bulk-create');
-        this.persistOperationFailure(row, error);
+        this.persistOperationFailure(row, error, 'create');
       }
     }
   }
@@ -434,7 +434,7 @@ export class OrderService {
     }, 'Courier operation failed');
   }
 
-  private persistOperationFailure(row: OrderRow, error: unknown, operation: 'tracking' | 'cancel'): void {
+  private persistOperationFailure(row: OrderRow, error: unknown, operation: 'create' | 'tracking' | 'cancel'): void {
     const normalized = this.normalizeCourierError(error);
     const response = error instanceof CourierError ? error.responsePayload : null;
     const request = error instanceof CourierError ? error.requestPayload : null;
